@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/fhwedos/whoisd/pkg/client"
 	"github.com/fhwedos/whoisd/pkg/config"
@@ -41,11 +42,11 @@ func New(name, description string) (*Record, error) {
 	}
 
 	conf := config.New()
-	c := nil
 
-	if conf.CacheEnabled {
-		c := cache.New(conf.CacheExpiration, conf.CacheCleanupInterval)
-	}
+	c := cache.New(
+		time.Duration(conf.CacheExpiration)*time.Minute,
+		time.Duration(conf.CacheCleanupInterval)*time.Minute,
+	)
 
 	return &Record{name, conf, daemonInstance, c}, nil
 }

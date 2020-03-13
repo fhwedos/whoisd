@@ -3,9 +3,11 @@ package storage
 import (
 	"flag"
 	"testing"
+	"time"
 
 	"github.com/fhwedos/whoisd/pkg/config"
 	"github.com/fhwedos/whoisd/pkg/mapper"
+	"github.com/patrickmn/go-cache"
 )
 
 func TestStorage(t *testing.T) {
@@ -13,20 +15,27 @@ func TestStorage(t *testing.T) {
 	conf := config.New()
 	flag.Parse()
 	bundle := make(mapper.Bundle, 1)
-	storage := New(conf, bundle)
-	answer, ok := storage.Search("")
+	cache := cache.New(
+		time.Duration(conf.CacheExpiration)*time.Minute,
+		time.Duration(conf.CacheCleanupInterval)*time.Minute,
+	)
+
+	storage := New(conf, bundle, cache)
+	answer, ok, fromCache := storage.Search("")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
 	if answer != "not found\n" {
 		t.Error("Expected answer is not found, got", answer)
 	}
-	answer, ok = storage.Search("aaa")
+	answer, ok, fromCache = storage.Search("aaa")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
 	if answer != "not found\n" {
 		t.Error("Expected answer is not found, got", answer)
+	}
+	if fromCache != false {
 	}
 	entry := new(mapper.Entry)
 	entry.TLDs = []string{"com"}
@@ -97,8 +106,8 @@ func TestStorage(t *testing.T) {
 		RelatedTo: "whois",
 	}
 	bundle = append(bundle, *entry)
-	storage = New(conf, bundle)
-	answer, ok = storage.Search("google.com")
+	storage = New(conf, bundle, cache)
+	answer, ok, fromCache = storage.Search("google.com")
 	if ok != true {
 		t.Error("Expected ok is true, got", ok)
 	}
@@ -120,8 +129,8 @@ Name Server: ns4.google.com
 		t.Error("Expected answer:\n", expected, "\n, got:\n", answer)
 	}
 	conf.Storage.StorageType = "mysql"
-	storage = New(conf, bundle)
-	answer, ok = storage.Search("mmm")
+	storage = New(conf, bundle, cache)
+	answer, ok, fromCache = storage.Search("mmm")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
@@ -129,8 +138,8 @@ Name Server: ns4.google.com
 		t.Error("Expected answer is not found, got", answer)
 	}
 	conf.Storage.StorageType = "elasticsearch"
-	storage = New(conf, bundle)
-	answer, ok = storage.Search("eee")
+	storage = New(conf, bundle, cache)
+	answer, ok, fromCache = storage.Search("eee")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}

@@ -28,7 +28,8 @@ type Storage interface {
 type Record struct {
 	dataStore Storage
 	mapper.Bundle
-	c *cache.Cache
+	conf *config.Record
+	c    *cache.Cache
 }
 
 // simplest logger, which initialized during starts of the application
@@ -51,6 +52,7 @@ func New(conf *config.Record, bundle mapper.Bundle, c *cache.Cache) *Record {
 				conf.Storage.TypeTable,
 			},
 			bundle,
+			conf,
 			c,
 		}
 	case "elasticsearch":
@@ -62,6 +64,7 @@ func New(conf *config.Record, bundle mapper.Bundle, c *cache.Cache) *Record {
 				conf.Storage.TypeTable,
 			},
 			bundle,
+			conf,
 			c,
 		}
 	case "dummy":
@@ -70,6 +73,7 @@ func New(conf *config.Record, bundle mapper.Bundle, c *cache.Cache) *Record {
 		return &Record{
 			&DummyRecord{conf.Storage.TypeTable},
 			bundle,
+			conf,
 			c,
 		}
 	}
@@ -84,7 +88,7 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 		errlog.Println("Empty query")
 	} else {
 		// try to load from cache
-		if storage.c != nil {
+		if storage.conf.CacheEnabled == true {
 			centry, found := storage.c.Get(strings.TrimSpace(query))
 			if found {
 				answer = centry.(string)
@@ -112,7 +116,7 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 	}
 
 	// save answer in cache
-	if storage.c != nil {
+	if storage.conf.CacheEnabled == true {
 		storage.c.Set(strings.TrimSpace(query), answer, cache.DefaultExpiration)
 	}
 

@@ -16,8 +16,8 @@ import (
 
 // Default values: path to config file, host, port, etc
 const (
-	defaultConfigPath           = "/etc/whoisd/whoisd.conf"
-	defaultMappingPath          = "/etc/whoisd/conf.d/mapping.json"
+	defaultConfigPath           = "/data/whoisd/conf/whoisd.conf"
+	defaultMappingPath          = "/data/whoisd/conf/mapping.json"
 	defaultHost                 = "0.0.0.0"
 	defaultPort                 = 43
 	defaultWorkers              = 1000

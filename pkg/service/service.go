@@ -68,6 +68,9 @@ func (service *Record) Run() (string, error) {
 			return service.Stop()
 		case "status":
 			return service.Status()
+		case "cacheClear":
+			return service.cacheFlush()
+
 		}
 	}
 
@@ -87,7 +90,7 @@ func (service *Record) Run() (string, error) {
 	)
 
 	// Logs cache setting
-	if service.Config.CacheEnabled == true {
+	if service.Config.CacheEnabled == false {
 		stdlog.Printf("Cache disabled\n")
 	} else {
 		stdlog.Printf("Cache enabled with expiration of %d minutes\n",
@@ -176,4 +179,11 @@ func acceptConnection(listener net.Listener, listen chan<- net.Conn) {
 		}
 		listen <- conn
 	}
+}
+
+// Clear all cache items
+func (service *Record) cacheFlush() (string, error) {
+	cnt := service.c.ItemCount()
+	go service.c.Flush()
+	return fmt.Sprintf("Cache was flushed. %d items removed from cache.", cnt), nil
 }

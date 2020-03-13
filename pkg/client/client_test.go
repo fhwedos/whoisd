@@ -4,9 +4,11 @@ import (
 	"net"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/fhwedos/whoisd/pkg/config"
 	"github.com/fhwedos/whoisd/pkg/storage"
+	"github.com/patrickmn/go-cache"
 )
 
 func TestClientHandling(t *testing.T) {
@@ -18,7 +20,13 @@ func TestClientHandling(t *testing.T) {
 		t.Error("Expected config loading without error, got", err.Error())
 	}
 	channel := make(chan Record, conf.Connections)
-	repository := storage.New(conf, mapp)
+
+	cache := cache.New(
+		time.Duration(conf.CacheExpiration)*time.Minute,
+		time.Duration(conf.CacheCleanupInterval)*time.Minute,
+	)
+
+	repository := storage.New(conf, mapp, cache)
 	go ProcessClient(channel, repository)
 
 	// make pipe connections for testing

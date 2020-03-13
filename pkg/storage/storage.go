@@ -13,6 +13,7 @@ import (
 
 	"github.com/fhwedos/whoisd/pkg/config"
 	"github.com/fhwedos/whoisd/pkg/mapper"
+	"github.com/patrickmn/go-cache"
 	"golang.org/x/net/idna"
 )
 
@@ -27,6 +28,7 @@ type Storage interface {
 type Record struct {
 	dataStore Storage
 	mapper.Bundle
+	c *cache.Cache
 }
 
 // simplest logger, which initialized during starts of the application
@@ -36,7 +38,7 @@ var (
 )
 
 // New - returns new Storage instance
-func New(conf *config.Record, bundle mapper.Bundle) *Record {
+func New(conf *config.Record, bundle mapper.Bundle, c *cache.Cache) *Record {
 	switch strings.ToLower(conf.Storage.StorageType) {
 	case "mysql":
 		return &Record{
@@ -49,6 +51,7 @@ func New(conf *config.Record, bundle mapper.Bundle) *Record {
 				conf.Storage.TypeTable,
 			},
 			bundle,
+			c,
 		}
 	case "elasticsearch":
 		return &Record{
@@ -59,6 +62,7 @@ func New(conf *config.Record, bundle mapper.Bundle) *Record {
 				conf.Storage.TypeTable,
 			},
 			bundle,
+			c,
 		}
 	case "dummy":
 		fallthrough
@@ -66,24 +70,34 @@ func New(conf *config.Record, bundle mapper.Bundle) *Record {
 		return &Record{
 			&DummyRecord{conf.Storage.TypeTable},
 			bundle,
+			c,
 		}
 	}
 }
 
 // Search and sort a data from the storage
-func (storage *Record) Search(query string) (answer string, ok bool) {
+func (storage *Record) Search(query string) (answer string, ok bool, fromCache bool) {
 	ok = false
 	answer = "not found\n"
 	stdlog.Println("query:", query)
 	if len(strings.TrimSpace(query)) == 0 {
 		errlog.Println("Empty query")
 	} else {
+		// try to load from cache
+		if storage.c != nil {
+			centry, found := storage.c.Get(strings.TrimSpace(query))
+			if found {
+				answer = centry.(string)
+				return answer, true, true
+			}
+		}
+
 		entry, err := storage.request(strings.TrimSpace(query))
 		if err != nil {
 			errlog.Println("Query:", query, err.Error())
 		} else {
 			if entry == nil || len(entry.Fields) == 0 {
-				return answer, ok
+				return answer, ok, false
 			}
 			ok = true
 
@@ -97,7 +111,12 @@ func (storage *Record) Search(query string) (answer string, ok bool) {
 		}
 	}
 
-	return answer, ok
+	// save answer in cache
+	if storage.c != nil {
+		storage.c.Set(strings.TrimSpace(query), answer, cache.DefaultExpiration)
+	}
+
+	return answer, ok, false
 }
 
 // request - get and load bundle by query

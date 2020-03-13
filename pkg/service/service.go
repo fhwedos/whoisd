@@ -15,6 +15,7 @@ import (
 	"github.com/fhwedos/whoisd/pkg/client"
 	"github.com/fhwedos/whoisd/pkg/config"
 	"github.com/fhwedos/whoisd/pkg/storage"
+	"github.com/patrickmn/go-cache"
 	"github.com/takama/daemon"
 )
 
@@ -29,6 +30,7 @@ type Record struct {
 	Name   string
 	Config *config.Record
 	daemon.Daemon
+	c *cache.Cache
 }
 
 // New - Create a new service record
@@ -38,7 +40,14 @@ func New(name, description string) (*Record, error) {
 		return nil, err
 	}
 
-	return &Record{name, config.New(), daemonInstance}, nil
+	conf := config.New()
+	c := nil
+
+	if conf.CacheEnabled {
+		c := cache.New(conf.CacheExpiration, conf.CacheCleanupInterval)
+	}
+
+	return &Record{name, conf, daemonInstance, c}, nil
 }
 
 // Run or manage the service
@@ -76,6 +85,15 @@ func (service *Record) Run() (string, error) {
 		service.Config.Storage.Port,
 	)
 
+	// Logs cache setting
+	if service.Config.CacheEnabled == true {
+		stdlog.Printf("Cache disabled\n")
+	} else {
+		stdlog.Printf("Cache enabled with expiration of %d minutes\n",
+			service.Config.CacheExpiration,
+		)
+	}
+
 	// Set up listener for defined host and port
 	listener, err := net.Listen("tcp", serviceHostPort)
 	if err != nil {
@@ -86,7 +104,7 @@ func (service *Record) Run() (string, error) {
 	channel := make(chan client.Record, service.Config.Connections)
 
 	// set up current storage
-	repository := storage.New(service.Config, bundle)
+	repository := storage.New(service.Config, bundle, service.c)
 
 	// init workers
 	for i := 0; i < service.Config.Workers; i++ {

@@ -16,19 +16,21 @@ import (
 
 // Default values: path to config file, host, port, etc
 const (
-	defaultConfigPath      = "/etc/whoisd/whoisd.conf"
-	defaultMappingPath     = "/etc/whoisd/conf.d/mapping.json"
-	defaultHost            = "0.0.0.0"
-	defaultPort            = 43
-	defaultWorkers         = 1000
-	defaultConnections     = 1000
-	defaultStorageType     = "Dummy"
-	defaultStorageHost     = "localhost"
-	defaultStoragePort     = 9200
-	defaultStorageUser     = "test"
-	defaultStoragePassword = "test"
-	defaultIndexBase       = "whois"
-	defaultTypeTable       = "domain"
+	defaultConfigPath           = "/etc/whoisd/whoisd.conf"
+	defaultMappingPath          = "/etc/whoisd/conf.d/mapping.json"
+	defaultHost                 = "0.0.0.0"
+	defaultPort                 = 43
+	defaultWorkers              = 1000
+	defaultConnections          = 1000
+	defaultStorageType          = "Dummy"
+	defaultStorageHost          = "localhost"
+	defaultStoragePort          = 9200
+	defaultStorageUser          = "test"
+	defaultStoragePassword      = "test"
+	defaultIndexBase            = "whois"
+	defaultTypeTable            = "domain"
+	defaultCacheExpiration      = 60
+	defaultCacheCleanupInterval = 10
 )
 
 // Record - standard record (struct) for config package
@@ -53,6 +55,10 @@ type Record struct {
 		IndexBase   string
 		TypeTable   string
 	}
+
+	CacheEnabled         bool
+	CacheExpiration      int
+	CacheCleanupInterval int
 }
 
 // New - returns new config record initialized with default values
@@ -75,6 +81,9 @@ func New() *Record {
 	flag.StringVar(&config.Storage.Password, "spassword", defaultStoragePassword, "password of storage user")
 	flag.StringVar(&config.Storage.IndexBase, "base", defaultIndexBase, "storage index or database name")
 	flag.StringVar(&config.Storage.TypeTable, "table", defaultTypeTable, "storage type or table name")
+	flag.BoolVar(&config.CacheEnabled, "cache", false, "cache enable or disable")
+	flag.IntVar(&config.CacheExpiration, "cexpiration", defaultCacheExpiration, "cache expiration in minutes")
+	flag.IntVar(&config.CacheCleanupInterval, "ccleanup", defaultCacheCleanupInterval, "cache cleanup interval in minutes")
 
 	return config
 }
@@ -110,6 +119,9 @@ func (config *Record) Load() (mapper.Bundle, error) {
 	flags.StringVar(&config.Storage.Password, "spassword", config.Storage.Password, "")
 	flags.StringVar(&config.Storage.IndexBase, "base", config.Storage.IndexBase, "")
 	flags.StringVar(&config.Storage.TypeTable, "table", config.Storage.TypeTable, "")
+	flags.BoolVar(&config.CacheEnabled, "cache", config.CacheEnabled, "")
+	flags.IntVar(&config.CacheExpiration, "cexpiration", config.CacheExpiration, "")
+	flags.IntVar(&config.CacheCleanupInterval, "ccleanup", config.CacheCleanupInterval, "")
 	flags.Parse(os.Args[1:])
 
 	return bundle, nil

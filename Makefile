@@ -3,8 +3,8 @@
 # license that can be found in the LICENSE file.
 
 APP=whoisd
-PROJECT=github.com/openprovider/whoisd
-REGISTRY?=docker.io/openprovider
+PROJECT=github.com/fhwedos/whoisd
+REGISTRY?=docker.io/fhwedos
 
 # Use the 0.0.0 tag for testing, it shouldn't clobber any release builds
 RELEASE?=0.5.0

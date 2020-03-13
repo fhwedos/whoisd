@@ -66,10 +66,12 @@ func ProcessClient(channel <-chan Record, repository *storage.Record) {
 		}
 		data, ok, fromCache := repository.Search(query)
 		message.Conn.Write([]byte(data))
-		stdlog.Println(message.Conn.RemoteAddr().String(), query, ok)
+
+		cached := ""
 		if fromCache == true {
-			stdlog.Printf(" (cached)")
+			cached = " (cached)"
 		}
+		stdlog.Println(message.Conn.RemoteAddr().String(), query, ok, cached)
 
 		message.Conn.Close()
 	}

@@ -69,7 +69,7 @@ func (service *Record) Run() (string, error) {
 		case "status":
 			return service.Status()
 		case "cacheClear":
-			return service.cacheFlush()
+			return cacheFlush(service)
 
 		}
 	}
@@ -182,8 +182,8 @@ func acceptConnection(listener net.Listener, listen chan<- net.Conn) {
 }
 
 // Clear all cache items
-func (service *Record) cacheFlush() (string, error) {
+func cacheFlush(service *Record) (string, error) {
 	cnt := service.c.ItemCount()
-	go service.c.Flush()
+	service.c.Flush()
 	return fmt.Sprintf("Cache was flushed. %d items removed from cache.", cnt), nil
 }

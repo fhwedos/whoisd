@@ -11,7 +11,7 @@ import (
 	"flag"
 	"os"
 
-	"github.com/openprovider/whoisd/pkg/mapper"
+	"github.com/fhwedos/whoisd/pkg/mapper"
 )
 
 // Default values: path to config file, host, port, etc

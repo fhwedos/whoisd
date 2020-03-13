@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/openprovider/whoisd/pkg/config"
-	"github.com/openprovider/whoisd/pkg/mapper"
+	"github.com/fhwedos/whoisd/pkg/config"
+	"github.com/fhwedos/whoisd/pkg/mapper"
 	"golang.org/x/net/idna"
 )
 

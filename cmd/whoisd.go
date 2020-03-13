@@ -12,9 +12,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/openprovider/whoisd/pkg/config"
-	"github.com/openprovider/whoisd/pkg/service"
-	"github.com/openprovider/whoisd/pkg/version"
+	"github.com/fhwedos/whoisd/pkg/config"
+	"github.com/fhwedos/whoisd/pkg/service"
+	"github.com/fhwedos/whoisd/pkg/version"
 )
 
 var (

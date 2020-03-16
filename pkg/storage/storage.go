@@ -29,8 +29,8 @@ type Storage interface {
 type Record struct {
 	dataStore Storage
 	mapper.Bundle
-	conf *config.Record
-	c    *memcache.Record
+	conf     *config.Record
+	memcache *memcache.Record
 }
 
 // simplest logger, which initialized during starts of the application
@@ -40,7 +40,7 @@ var (
 )
 
 // New - returns new Storage instance
-func New(conf *config.Record, bundle mapper.Bundle, c *memcache.Record) *Record {
+func New(conf *config.Record, bundle mapper.Bundle, memcache *memcache.Record) *Record {
 	switch strings.ToLower(conf.Storage.StorageType) {
 	case "mysql":
 		return &Record{
@@ -54,7 +54,7 @@ func New(conf *config.Record, bundle mapper.Bundle, c *memcache.Record) *Record 
 			},
 			bundle,
 			conf,
-			c,
+			memcache,
 		}
 	case "elasticsearch":
 		return &Record{
@@ -66,7 +66,7 @@ func New(conf *config.Record, bundle mapper.Bundle, c *memcache.Record) *Record 
 			},
 			bundle,
 			conf,
-			c,
+			memcache,
 		}
 	case "dummy":
 		fallthrough
@@ -75,7 +75,7 @@ func New(conf *config.Record, bundle mapper.Bundle, c *memcache.Record) *Record 
 			&DummyRecord{conf.Storage.TypeTable},
 			bundle,
 			conf,
-			c,
+			memcache,
 		}
 	}
 }
@@ -89,8 +89,8 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 		errlog.Println("Empty query")
 	} else {
 		// try to load from cache
-		if storage.c != nil {
-			centry, found := storage.c.Get(strings.TrimSpace(query))
+		if storage.memcache != nil {
+			centry, found := storage.memcache.Get(strings.TrimSpace(query))
 			if found {
 				answer = centry.(string)
 
@@ -110,8 +110,8 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 		} else {
 			if entry == nil || len(entry.Fields) == 0 {
 				// save answer in cache
-				if storage.c != nil {
-					storage.c.Set(strings.TrimSpace(query), answer)
+				if storage.memcache != nil {
+					storage.memcache.Set(strings.TrimSpace(query), answer)
 				}
 
 				return answer, ok, false
@@ -129,8 +129,8 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 	}
 
 	// save answer in cache
-	if storage.c != nil {
-		storage.c.Set(strings.TrimSpace(query), answer)
+	if storage.memcache != nil {
+		storage.memcache.Set(strings.TrimSpace(query), answer)
 		//stdlog.Println("Items cached: ", storage.c.cache.ItemCount())
 	}
 

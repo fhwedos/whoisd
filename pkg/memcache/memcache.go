@@ -16,7 +16,7 @@ import (
 // Record - standard record (struct) for config package
 type Record struct {
 	config *config.Record
-	c      *cache.Cache
+	C      *cache.Cache
 }
 
 // CacheControl - cache control commands
@@ -64,8 +64,8 @@ func (memcache *Record) checkCacheControl() error {
 	}
 
 	if control.flushCache == true {
-		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.c.ItemCount())
-		memcache.c.Flush()
+		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.C.ItemCount())
+		memcache.C.Flush()
 	}
 
 	return nil
@@ -130,12 +130,12 @@ func WriteCacheControl(path string, flush bool, list bool) error {
 
 // Set - save item in cache
 func (memcache *Record) Set(key string, value interface{}) {
-	memcache.c.Set(key, value, cache.DefaultExpiration)
-	stdlog.Println("Items cached: ", memcache.c.ItemCount())
+	memcache.C.Set(key, value, cache.DefaultExpiration)
+	stdlog.Println("Items cached: ", memcache.C.ItemCount())
 }
 
 // Get - get item from cache
 func (memcache *Record) Get(key string) (interface{}, bool) {
 	memcache.checkCacheControl()
-	return memcache.c.Get(key)
+	return memcache.C.Get(key)
 }

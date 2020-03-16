@@ -30,7 +30,7 @@ type Record struct {
 	Name   string
 	Config *config.Record
 	daemon.Daemon
-	c *memcache.Record
+	Memcache *memcache.Record
 }
 
 // New - Create a new service record
@@ -103,7 +103,7 @@ func (service *Record) Run() (string, error) {
 	channel := make(chan client.Record, service.Config.Connections)
 
 	// set up current storage
-	repository := storage.New(service.Config, bundle, service.c)
+	repository := storage.New(service.Config, bundle, service.Memcache)
 
 	// init workers
 	for i := 0; i < service.Config.Workers; i++ {

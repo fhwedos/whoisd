@@ -30,7 +30,7 @@ type Record struct {
 	dataStore Storage
 	mapper.Bundle
 	conf     *config.Record
-	memcache *memcache.Record
+	Memcache *memcache.Record
 }
 
 // simplest logger, which initialized during starts of the application
@@ -89,9 +89,24 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 		errlog.Println("Empty query")
 	} else {
 		// try to load from cache
-		if storage.memcache != nil {
-			centry, found := storage.memcache.Get(strings.TrimSpace(query))
+		if storage.Memcache != nil {
+			centry, found := storage.Memcache.Get(strings.TrimSpace(query))
 			if found {
+				answer = centry.(string)
+
+				if strings.Contains(answer, "No match for domain ") {
+					ok = false
+				} else {
+					ok = true
+				}
+
+				return answer, ok, true
+			}
+
+			centry, found = storage.Memcache.WhoisCache.Get(strings.TrimSpace(query))
+			if found {
+				stdlog.Println("Found shit cache.")
+
 				answer = centry.(string)
 
 				if strings.Contains(answer, "No match for domain ") {
@@ -110,8 +125,9 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 		} else {
 			if entry == nil || len(entry.Fields) == 0 {
 				// save answer in cache
-				if storage.memcache != nil {
-					storage.memcache.Set(strings.TrimSpace(query), answer)
+				if storage.Memcache != nil {
+					storage.Memcache.Set(strings.TrimSpace(query), answer)
+					storage.Memcache.WhoisCache.Set(strings.TrimSpace(query), answer, 0)
 				}
 
 				return answer, ok, false
@@ -129,9 +145,9 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 	}
 
 	// save answer in cache
-	if storage.memcache != nil {
-		storage.memcache.Set(strings.TrimSpace(query), answer)
-		//stdlog.Println("Items cached: ", storage.c.cache.ItemCount())
+	if storage.Memcache != nil {
+		storage.Memcache.Set(strings.TrimSpace(query), answer)
+		stdlog.Println("Items cached: ", storage.Memcache.WhoisCache.ItemCount())
 	}
 
 	return answer, ok, false

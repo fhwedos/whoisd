@@ -15,8 +15,8 @@ import (
 
 // Record - standard record (struct) for config package
 type Record struct {
-	config *config.Record
-	C      *cache.Cache
+	config     *config.Record
+	WhoisCache *cache.Cache
 }
 
 // CacheControl - cache control commands
@@ -64,8 +64,8 @@ func (memcache *Record) checkCacheControl() error {
 	}
 
 	if control.flushCache == true {
-		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.C.ItemCount())
-		memcache.C.Flush()
+		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.WhoisCache.ItemCount())
+		memcache.WhoisCache.Flush()
 	}
 
 	return nil
@@ -104,9 +104,10 @@ func WriteCacheControl(path string, flush bool, list bool) error {
 	control.flushCache = flush
 	control.listCache = list
 
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0666)
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0755)
 	if err != nil {
-		errlog.Println("Failed to open cache control file.")
+		stdlog.Println("Failed to open cache control file.", err)
+		errlog.Println("Failed to open cache control file.", err)
 		return err
 	}
 
@@ -117,8 +118,9 @@ func WriteCacheControl(path string, flush bool, list bool) error {
 
 	defer file.Close()
 
-	ctrlFile, err := os.OpenFile("/etc/whoisd/cache.control", os.O_CREATE|os.O_WRONLY, 0666)
+	ctrlFile, err := os.OpenFile("/etc/whoisd/cache.control", os.O_CREATE|os.O_WRONLY, 0755)
 	if err != nil {
+		stdlog.Println("Failed to open cache control file.", err)
 		errlog.Println("Failed to create cache control file")
 		return err
 	}
@@ -130,12 +132,12 @@ func WriteCacheControl(path string, flush bool, list bool) error {
 
 // Set - save item in cache
 func (memcache *Record) Set(key string, value interface{}) {
-	memcache.C.Set(key, value, cache.DefaultExpiration)
-	stdlog.Println("Items cached: ", memcache.C.ItemCount())
+	memcache.WhoisCache.Set(key, value, cache.DefaultExpiration)
+	stdlog.Println("Items cached: ", memcache.WhoisCache.ItemCount())
 }
 
 // Get - get item from cache
 func (memcache *Record) Get(key string) (interface{}, bool) {
-	memcache.checkCacheControl()
-	return memcache.C.Get(key)
+	//memcache.checkCacheControl()
+	return memcache.WhoisCache.Get(key)
 }

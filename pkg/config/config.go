@@ -16,8 +16,9 @@ import (
 
 // Default values: path to config file, host, port, etc
 const (
-	defaultConfigPath           = "/data/whoisd/conf/whoisd.conf"
-	defaultMappingPath          = "/data/whoisd/conf/mapping.json"
+	defaultConfigPath           = "/home/fh168/go/src/github.com/fhwedos/whoisd/test/testconfig.conf"
+	defaultMappingPath          = "/home/fh168/go/src/github.com/fhwedos/whoisd/test/testmapping.json"
+	defaultCacheControl         = "/home/fh168/go/src/github.com/fhwedos/whoisd/test/testcache.control"
 	defaultHost                 = "0.0.0.0"
 	defaultPort                 = 43
 	defaultWorkers              = 1000
@@ -35,8 +36,9 @@ const (
 
 // Record - standard record (struct) for config package
 type Record struct {
-	ConfigPath  string
-	MappingPath string
+	ConfigPath       string
+	MappingPath      string
+	CacheControlPath string
 
 	ShowVersion bool
 	TestMode    bool

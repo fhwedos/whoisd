@@ -5,6 +5,7 @@
 package storage
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"sort"
@@ -13,7 +14,7 @@ import (
 
 	"github.com/fhwedos/whoisd/pkg/config"
 	"github.com/fhwedos/whoisd/pkg/mapper"
-	"github.com/patrickmn/go-cache"
+	"github.com/fhwedos/whoisd/pkg/memcache"
 	"golang.org/x/net/idna"
 )
 
@@ -29,7 +30,7 @@ type Record struct {
 	dataStore Storage
 	mapper.Bundle
 	conf *config.Record
-	c    *cache.Cache
+	c    *memcache.Record
 }
 
 // simplest logger, which initialized during starts of the application
@@ -39,7 +40,7 @@ var (
 )
 
 // New - returns new Storage instance
-func New(conf *config.Record, bundle mapper.Bundle, c *cache.Cache) *Record {
+func New(conf *config.Record, bundle mapper.Bundle, c *memcache.Record) *Record {
 	switch strings.ToLower(conf.Storage.StorageType) {
 	case "mysql":
 		return &Record{
@@ -82,17 +83,24 @@ func New(conf *config.Record, bundle mapper.Bundle, c *cache.Cache) *Record {
 // Search and sort a data from the storage
 func (storage *Record) Search(query string) (answer string, ok bool, fromCache bool) {
 	ok = false
-	answer = "not found\n"
+	answer = fmt.Sprintf("No match for domain \"%s\".\n", strings.TrimSpace(query))
 	stdlog.Println("query:", query)
 	if len(strings.TrimSpace(query)) == 0 {
 		errlog.Println("Empty query")
 	} else {
 		// try to load from cache
-		if storage.conf.CacheEnabled == true {
+		if storage.c != nil {
 			centry, found := storage.c.Get(strings.TrimSpace(query))
 			if found {
 				answer = centry.(string)
-				return answer, true, true
+
+				if strings.Contains(answer, "No match for domain ") {
+					ok = false
+				} else {
+					ok = true
+				}
+
+				return answer, ok, true
 			}
 		}
 
@@ -101,6 +109,11 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 			errlog.Println("Query:", query, err.Error())
 		} else {
 			if entry == nil || len(entry.Fields) == 0 {
+				// save answer in cache
+				if storage.c != nil {
+					storage.c.Set(strings.TrimSpace(query), answer)
+				}
+
 				return answer, ok, false
 			}
 			ok = true
@@ -116,8 +129,9 @@ func (storage *Record) Search(query string) (answer string, ok bool, fromCache b
 	}
 
 	// save answer in cache
-	if storage.conf.CacheEnabled == true {
-		storage.c.Set(strings.TrimSpace(query), answer, cache.DefaultExpiration)
+	if storage.c != nil {
+		storage.c.Set(strings.TrimSpace(query), answer)
+		//stdlog.Println("Items cached: ", storage.c.cache.ItemCount())
 	}
 
 	return answer, ok, false

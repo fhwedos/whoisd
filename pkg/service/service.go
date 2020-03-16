@@ -11,12 +11,11 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"github.com/fhwedos/whoisd/pkg/client"
 	"github.com/fhwedos/whoisd/pkg/config"
+	"github.com/fhwedos/whoisd/pkg/memcache"
 	"github.com/fhwedos/whoisd/pkg/storage"
-	"github.com/patrickmn/go-cache"
 	"github.com/takama/daemon"
 )
 
@@ -31,7 +30,7 @@ type Record struct {
 	Name   string
 	Config *config.Record
 	daemon.Daemon
-	c *cache.Cache
+	c *memcache.Record
 }
 
 // New - Create a new service record
@@ -42,11 +41,7 @@ func New(name, description string) (*Record, error) {
 	}
 
 	conf := config.New()
-
-	c := cache.New(
-		time.Duration(conf.CacheExpiration)*time.Minute,
-		time.Duration(conf.CacheCleanupInterval)*time.Minute,
-	)
+	c, err := memcache.New(conf)
 
 	return &Record{name, conf, daemonInstance, c}, nil
 }
@@ -69,7 +64,7 @@ func (service *Record) Run() (string, error) {
 		case "status":
 			return service.Status()
 		case "cacheClear":
-			return cacheFlush(service)
+			return service.cacheFlush()
 
 		}
 	}
@@ -182,8 +177,7 @@ func acceptConnection(listener net.Listener, listen chan<- net.Conn) {
 }
 
 // Clear all cache items
-func cacheFlush(service *Record) (string, error) {
-	cnt := service.c.ItemCount()
-	service.c.Flush()
-	return fmt.Sprintf("Cache was flushed. %d items removed from cache.", cnt), nil
+func (service *Record) cacheFlush() (string, error) {
+	memcache.WriteCacheControl(service.Config.CacheControlPath, true, false)
+	return fmt.Sprintf("Cache will be flushed."), nil
 }

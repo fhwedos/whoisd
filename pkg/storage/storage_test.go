@@ -3,11 +3,10 @@ package storage
 import (
 	"flag"
 	"testing"
-	"time"
 
 	"github.com/fhwedos/whoisd/pkg/config"
 	"github.com/fhwedos/whoisd/pkg/mapper"
-	"github.com/patrickmn/go-cache"
+	"github.com/fhwedos/whoisd/pkg/memcache"
 )
 
 func TestStorage(t *testing.T) {
@@ -15,24 +14,21 @@ func TestStorage(t *testing.T) {
 	conf := config.New()
 	flag.Parse()
 	bundle := make(mapper.Bundle, 1)
-	cache := cache.New(
-		time.Duration(conf.CacheExpiration)*time.Minute,
-		time.Duration(conf.CacheCleanupInterval)*time.Minute,
-	)
+	c, _ := memcache.New(conf)
 
-	storage := New(conf, bundle, cache)
+	storage := New(conf, bundle, c)
 	answer, ok, fromCache := storage.Search("")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
-	if answer != "not found\n" {
+	if answer != "No match for domain \"\".\n" {
 		t.Error("Expected answer is not found, got", answer)
 	}
 	answer, ok, fromCache = storage.Search("aaa")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
-	if answer != "not found\n" {
+	if answer != "No match for domain \"aaa\".\n" {
 		t.Error("Expected answer is not found, got", answer)
 	}
 	if fromCache != false {
@@ -106,7 +102,7 @@ func TestStorage(t *testing.T) {
 		RelatedTo: "whois",
 	}
 	bundle = append(bundle, *entry)
-	storage = New(conf, bundle, cache)
+	storage = New(conf, bundle, c)
 	answer, ok, fromCache = storage.Search("google.com")
 	if ok != true {
 		t.Error("Expected ok is true, got", ok)
@@ -129,21 +125,21 @@ Name Server: ns4.google.com
 		t.Error("Expected answer:\n", expected, "\n, got:\n", answer)
 	}
 	conf.Storage.StorageType = "mysql"
-	storage = New(conf, bundle, cache)
+	storage = New(conf, bundle, c)
 	answer, ok, fromCache = storage.Search("mmm")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
-	if answer != "not found\n" {
+	if answer != "No match for domain \"mmm\".\n" {
 		t.Error("Expected answer is not found, got", answer)
 	}
 	conf.Storage.StorageType = "elasticsearch"
-	storage = New(conf, bundle, cache)
+	storage = New(conf, bundle, c)
 	answer, ok, fromCache = storage.Search("eee")
 	if ok != false {
 		t.Error("Expected ok is false, got", ok)
 	}
-	if answer != "not found\n" {
+	if answer != "No match for domain \"eee\".\n" {
 		t.Error("Expected answer is not found, got", answer)
 	}
 }

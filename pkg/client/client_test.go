@@ -4,11 +4,10 @@ import (
 	"net"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/fhwedos/whoisd/pkg/config"
+	"github.com/fhwedos/whoisd/pkg/memcache"
 	"github.com/fhwedos/whoisd/pkg/storage"
-	"github.com/patrickmn/go-cache"
 )
 
 func TestClientHandling(t *testing.T) {
@@ -21,12 +20,9 @@ func TestClientHandling(t *testing.T) {
 	}
 	channel := make(chan Record, conf.Connections)
 
-	cache := cache.New(
-		time.Duration(conf.CacheExpiration)*time.Minute,
-		time.Duration(conf.CacheCleanupInterval)*time.Minute,
-	)
+	c, _ := memcache.New(conf)
 
-	repository := storage.New(conf, mapp, cache)
+	repository := storage.New(conf, mapp, c)
 	go ProcessClient(channel, repository)
 
 	// make pipe connections for testing

@@ -16,7 +16,7 @@ import (
 // Record - standard record (struct) for config package
 type Record struct {
 	config *config.Record
-	cache  *cache.Cache
+	c      *cache.Cache
 }
 
 // CacheControl - cache control commands
@@ -37,22 +37,22 @@ func New(conf *config.Record) (*Record, error) {
 		return nil, errors.New("Cache is not enabled")
 	}
 
-	cache := cache.New(
+	c := cache.New(
 		time.Duration(conf.CacheExpiration)*time.Minute,
 		time.Duration(conf.CacheCleanupInterval)*time.Minute,
 	)
 
-	return &Record{conf, cache}, nil
+	return &Record{conf, c}, nil
 }
 
 // checkCacheControl - checks and proccess cache control commands
 func (memcache *Record) checkCacheControl() error {
-	_, err := os.Stat("cache.control")
+	_, err := os.Stat("/etc/whoisd/cache.control")
 	if err != nil {
 		return err
 	}
 
-	err = os.Remove("cache.control")
+	err = os.Remove("/etc/whoisd/cache.control")
 	if err != nil {
 		errlog.Println("Failed to remove cache.control file.")
 	}
@@ -64,8 +64,8 @@ func (memcache *Record) checkCacheControl() error {
 	}
 
 	if control.flushCache == true {
-		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.cache.ItemCount())
-		memcache.cache.Flush()
+		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.c.ItemCount())
+		memcache.c.Flush()
 	}
 
 	return nil
@@ -117,23 +117,25 @@ func WriteCacheControl(path string, flush bool, list bool) error {
 
 	defer file.Close()
 
-	_, err = os.OpenFile("cache.control", os.O_CREATE|os.O_WRONLY, 0666)
+	ctrlFile, err := os.OpenFile("/etc/whoisd/cache.control", os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		errlog.Println("Failed to create cache control file")
 		return err
 	}
+
+	defer ctrlFile.Close()
 
 	return nil
 }
 
 // Set - save item in cache
 func (memcache *Record) Set(key string, value interface{}) {
-	memcache.cache.Set(key, value, cache.DefaultExpiration)
-	stdlog.Println("Items cached: ", memcache.cache.ItemCount())
+	memcache.c.Set(key, value, cache.DefaultExpiration)
+	stdlog.Println("Items cached: ", memcache.c.ItemCount())
 }
 
 // Get - get item from cache
 func (memcache *Record) Get(key string) (interface{}, bool) {
 	memcache.checkCacheControl()
-	return memcache.cache.Get(key)
+	return memcache.c.Get(key)
 }

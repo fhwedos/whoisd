@@ -16,9 +16,9 @@ import (
 
 // Default values: path to config file, host, port, etc
 const (
-	defaultConfigPath           = "/home/fh168/go/src/github.com/fhwedos/whoisd/test/testconfig.conf"
-	defaultMappingPath          = "/home/fh168/go/src/github.com/fhwedos/whoisd/test/testmapping.json"
-	defaultCacheControl         = "/home/fh168/go/src/github.com/fhwedos/whoisd/test/testcache.control"
+	defaultConfigPath           = "/etc/whoisd/conf.d/whoisd.conf"
+	defaultMappingPath          = "/etc/whoisd/conf.d/mapping.json"
+	defaultCacheControl         = "/etc/whoisd/conf.d/cache.control"
 	defaultHost                 = "0.0.0.0"
 	defaultPort                 = 43
 	defaultWorkers              = 1000

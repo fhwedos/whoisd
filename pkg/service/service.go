@@ -41,7 +41,7 @@ func New(name, description string) (*Record, error) {
 	}
 
 	conf := config.New()
-	c, err := memcache.New(conf)
+	c, _ := memcache.New(conf)
 
 	return &Record{name, conf, daemonInstance, c}, nil
 }

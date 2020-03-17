@@ -18,7 +18,9 @@ import (
 const (
 	defaultConfigPath           = "/etc/whoisd/conf.d/whoisd.conf"
 	defaultMappingPath          = "/etc/whoisd/conf.d/mapping.json"
-	defaultCacheControl         = "/etc/whoisd/conf.d/cache.control"
+	defaultCacheControlPath     = "/etc/whoisd/conf.d/cache.control"
+	defaultCacheExecutionFile   = "/etc/whoisd/conf.d/.cache"
+	defaultCacheListFile        = "/etc/whoisd/cache.list"
 	defaultHost                 = "0.0.0.0"
 	defaultPort                 = 43
 	defaultWorkers              = 1000
@@ -36,9 +38,11 @@ const (
 
 // Record - standard record (struct) for config package
 type Record struct {
-	ConfigPath       string
-	MappingPath      string
-	CacheControlPath string
+	ConfigPath         string
+	MappingPath        string
+	CacheControlPath   string
+	CacheExecutionFile string
+	CacheListFile      string
 
 	ShowVersion bool
 	TestMode    bool
@@ -72,6 +76,9 @@ func New() *Record {
 	flag.BoolVar(&config.TestMode, "test", false, "test mode")
 	flag.StringVar(&config.ConfigPath, "config", defaultConfigPath, "path to configuration file")
 	flag.StringVar(&config.MappingPath, "mapping", defaultMappingPath, "path to mapping file")
+	flag.StringVar(&config.CacheControlPath, "ccontrol", defaultCacheControlPath, "path to cache control configuration file")
+	flag.StringVar(&config.CacheExecutionFile, "cexec", defaultCacheExecutionFile, "path to cache control execution file")
+	flag.StringVar(&config.CacheListFile, "clist", defaultCacheListFile, "path to cache list file")
 	flag.StringVar(&config.Host, "host", defaultHost, "host name or IP address")
 	flag.IntVar(&config.Port, "port", defaultPort, "port number")
 	flag.IntVar(&config.Workers, "work", defaultWorkers, "number of active workers")
@@ -107,6 +114,9 @@ func (config *Record) Load() (mapper.Bundle, error) {
 	// Begin ignored flags
 	flags.StringVar(&path, "config", "", "")
 	flags.StringVar(&path, "mapping", "", "")
+	flags.StringVar(&path, "ccontrol", "", "")
+	flags.StringVar(&path, "cexec", "", "")
+	flags.StringVar(&path, "clist", "", "")
 	// End ignored flags
 	flags.BoolVar(&config.TestMode, "t", config.TestMode, "")
 	flags.BoolVar(&config.TestMode, "test", config.TestMode, "")

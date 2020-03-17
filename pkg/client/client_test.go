@@ -20,7 +20,7 @@ func TestClientHandling(t *testing.T) {
 	}
 	channel := make(chan Record, conf.Connections)
 
-	c, _ := memcache.New(conf)
+	c := memcache.New(conf)
 
 	repository := storage.New(conf, mapp, c)
 	go ProcessClient(channel, repository)

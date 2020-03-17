@@ -14,7 +14,7 @@ func TestStorage(t *testing.T) {
 	conf := config.New()
 	flag.Parse()
 	bundle := make(mapper.Bundle, 1)
-	c, _ := memcache.New(conf)
+	c := memcache.New(conf)
 
 	storage := New(conf, bundle, c)
 	answer, ok, fromCache := storage.Search("")

@@ -3,8 +3,8 @@ package memcache
 import (
 	"bufio"
 	"encoding/json"
-	"errors"
-	"flag"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -15,14 +15,14 @@ import (
 
 // Record - standard record (struct) for config package
 type Record struct {
-	config     *config.Record
+	Config     *config.Record
 	WhoisCache *cache.Cache
 }
 
 // CacheControl - cache control commands
 type CacheControl struct {
-	flushCache bool
-	listCache  bool
+	FlushCache bool
+	ListCache  bool
 }
 
 // simplest logger, which initialized during starts of the application
@@ -32,102 +32,13 @@ var (
 )
 
 // New - returns new config record initialized with default values
-func New(conf *config.Record) (*Record, error) {
-	if conf.CacheEnabled != true {
-		return nil, errors.New("Cache is not enabled")
-	}
-
-	c := cache.New(
+func New(conf *config.Record) *Record {
+	WhoisCache := cache.New(
 		time.Duration(conf.CacheExpiration)*time.Minute,
 		time.Duration(conf.CacheCleanupInterval)*time.Minute,
 	)
 
-	return &Record{conf, c}, nil
-}
-
-// checkCacheControl - checks and proccess cache control commands
-func (memcache *Record) checkCacheControl() error {
-	_, err := os.Stat("/etc/whoisd/cache.control")
-	if err != nil {
-		return err
-	}
-
-	err = os.Remove("/etc/whoisd/cache.control")
-	if err != nil {
-		errlog.Println("Failed to remove cache.control file.")
-	}
-
-	control := getCacheControl(memcache.config.CacheControlPath)
-
-	if control.listCache == true {
-		stdlog.Println("Cache list")
-	}
-
-	if control.flushCache == true {
-		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.WhoisCache.ItemCount())
-		memcache.WhoisCache.Flush()
-	}
-
-	return nil
-}
-
-// initCacheControl - init cache control configuration
-func getCacheControl(path string) *CacheControl {
-	control := new(CacheControl)
-	flag.BoolVar(&control.flushCache, "flush", false, "removes all items from cache")
-	flag.BoolVar(&control.listCache, "list", false, "list all items in cache into file")
-	loadCacheControlFile(control, path)
-	return control
-}
-
-// loadCacheControlFile - loads cache control file into CacheControl record
-func loadCacheControlFile(control *CacheControl, path string) error {
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		return nil
-	}
-	file, err := os.Open(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-	if err := json.NewDecoder(bufio.NewReader(file)).Decode(&control); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// WriteCacheControl - writes cache control configuration
-func WriteCacheControl(path string, flush bool, list bool) error {
-	control := new(CacheControl)
-	control.flushCache = flush
-	control.listCache = list
-
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0755)
-	if err != nil {
-		stdlog.Println("Failed to open cache control file.", err)
-		errlog.Println("Failed to open cache control file.", err)
-		return err
-	}
-
-	if err := json.NewEncoder(bufio.NewWriter(file)).Encode(&control); err != nil {
-		errlog.Println("Failed to write cache control configuration")
-		return err
-	}
-
-	defer file.Close()
-
-	ctrlFile, err := os.OpenFile("/etc/whoisd/cache.control", os.O_CREATE|os.O_WRONLY, 0755)
-	if err != nil {
-		stdlog.Println("Failed to open cache control file.", err)
-		errlog.Println("Failed to create cache control file")
-		return err
-	}
-
-	defer ctrlFile.Close()
-
-	return nil
+	return &Record{conf, WhoisCache}
 }
 
 // Set - save item in cache
@@ -138,6 +49,139 @@ func (memcache *Record) Set(key string, value interface{}) {
 
 // Get - get item from cache
 func (memcache *Record) Get(key string) (interface{}, bool) {
-	//memcache.checkCacheControl()
+	_ = memcache.checkCacheControl()
 	return memcache.WhoisCache.Get(key)
+}
+
+// checkCacheControl - checks and proccess cache control commands
+func (memcache *Record) checkCacheControl() error {
+	// retrieve cache control execution file info
+	_, err := os.Stat(memcache.Config.CacheExecutionFile)
+	if err != nil {
+		return nil
+	}
+
+	// remove cache control execution file
+	if err := os.Remove(memcache.Config.CacheExecutionFile); err != nil {
+		errlog.Println("Failed to remove cache.control file.", err)
+	}
+
+	// get cache control configuration
+	control := getCacheControl(memcache.Config)
+
+	// list cache
+	if control.ListCache == true {
+		memcache.listCache()
+	}
+
+	// flush cache
+	if control.FlushCache == true {
+		stdlog.Printf("Flush cache. %d items removed from cache.", memcache.WhoisCache.ItemCount())
+		memcache.WhoisCache.Flush()
+	}
+
+	return nil
+}
+
+// listCache - create cache list file with all cached items
+func (memcache *Record) listCache() {
+	items := memcache.WhoisCache.Items()
+	if len(items) == 0 {
+		return
+	}
+
+	listFile, err := os.OpenFile(
+		memcache.Config.CacheListFile,
+		os.O_CREATE|os.O_WRONLY,
+		0644,
+	)
+
+	if err != nil {
+		errlog.Println("Failed to create cache list file.", err)
+		return
+	}
+
+	for k := range items {
+		_, err := fmt.Fprintln(listFile, k)
+		if err != nil {
+			errlog.Println("Failed to write into cache list file.", err)
+			return
+		}
+	}
+
+	if err := listFile.Close(); err != nil {
+		errlog.Println("Failed to close cache list file.", err)
+	}
+
+	stdlog.Printf("Cache list file created. %d items listed.\n", len(items))
+}
+
+// initCacheControl - init cache control configuration
+func getCacheControl(conf *config.Record) *CacheControl {
+	// initialize cache control configuration
+	Control := &CacheControl{
+		FlushCache: false,
+		ListCache:  false,
+	}
+
+	// load configuration from file
+	if err := loadCacheControlFile(conf, Control); err != nil {
+		stdlog.Println("Failed to load cache control configuration file.", err)
+	}
+
+	return Control
+}
+
+// loadCacheControlFile - loads cache control file into CacheControl record
+func loadCacheControlFile(conf *config.Record, control *CacheControl) error {
+	// check if cache control configuration file exists
+	_, err := os.Stat(conf.CacheControlPath)
+	if os.IsNotExist(err) {
+		return nil
+	}
+
+	// open cache control configuration file
+	file, err := os.Open(conf.CacheControlPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// map JSON to struct
+	if err := json.NewDecoder(bufio.NewReader(file)).Decode(&control); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// WriteCacheControl - writes cache control configuration
+func WriteCacheControl(conf *config.Record, flush bool, list bool) error {
+	control := &CacheControl{
+		FlushCache: flush,
+		ListCache:  list,
+	}
+
+	// convert cache control struct to JSON
+	file, err := json.MarshalIndent(control, "", " ")
+	if err != nil {
+		errlog.Println("Failed to convert cache control configuration to JSON.", err)
+		return err
+	}
+
+	// save cache control configuration into file
+	if err := ioutil.WriteFile(conf.CacheControlPath, file, 0644); err != nil {
+		errlog.Println("Failed to create cache control configuration file.", err)
+		return err
+	}
+
+	// creates cache control execution file
+	ctrlFile, err := os.OpenFile(conf.CacheExecutionFile, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		errlog.Println("Failed to create cache control configuration file", err)
+		return err
+	}
+	defer ctrlFile.Close()
+
+	return nil
 }

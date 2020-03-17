@@ -69,7 +69,7 @@ func ProcessClient(channel <-chan Record, repository *storage.Record) {
 
 		cached := ""
 		if fromCache == true {
-			cached = " (cached)"
+			cached = "(cached)"
 		}
 		stdlog.Println(message.Conn.RemoteAddr().String(), query, ok, cached)
 

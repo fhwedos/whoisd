@@ -41,9 +41,9 @@ func New(name, description string) (*Record, error) {
 	}
 
 	conf := config.New()
-	c, _ := memcache.New(conf)
+	memcache := memcache.New(conf)
 
-	return &Record{name, conf, daemonInstance, c}, nil
+	return &Record{name, conf, daemonInstance, memcache}, nil
 }
 
 // Run or manage the service
@@ -63,9 +63,10 @@ func (service *Record) Run() (string, error) {
 			return service.Stop()
 		case "status":
 			return service.Status()
-		case "cacheClear":
+		case "cacheFlush":
 			return service.cacheFlush()
-
+		case "cacheStatus":
+			return service.cacheStatus()
 		}
 	}
 
@@ -178,6 +179,24 @@ func acceptConnection(listener net.Listener, listen chan<- net.Conn) {
 
 // Clear all cache items
 func (service *Record) cacheFlush() (string, error) {
-	memcache.WriteCacheControl(service.Config.CacheControlPath, true, false)
+	// Load configuration and get mapping
+	_, err := service.Config.Load()
+	if err != nil {
+		return "Loading mapping file was unsuccessful", err
+	}
+
+	memcache.WriteCacheControl(service.Config, true, false)
 	return fmt.Sprintf("Cache will be flushed."), nil
+}
+
+// List all cache items in file and logs cache items count
+func (service *Record) cacheStatus() (string, error) {
+	// Load configuration and get mapping
+	_, err := service.Config.Load()
+	if err != nil {
+		return "Loading mapping file was unsuccessful", err
+	}
+
+	memcache.WriteCacheControl(service.Config, false, true)
+	return fmt.Sprintf("Cache will be listed in file."), nil
 }

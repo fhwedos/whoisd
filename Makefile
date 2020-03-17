@@ -13,7 +13,7 @@ GOARCH?=amd64
 
 WHOISD_LOCAL_HOST?=0.0.0.0
 WHOISD_LOCAL_PORT?=43
-WHOISD_LOG_LEVEL?=1
+WHOISD_LOG_LEVEL?=0
 
 # Namespace: dev, prod, release, cte, username ...
 NAMESPACE?=dev

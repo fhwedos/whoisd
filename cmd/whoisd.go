@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/fhwedos/whoisd/pkg/config"
+	"github.com/fhwedos/whoisd/pkg/memcache"
 	"github.com/fhwedos/whoisd/pkg/service"
 	"github.com/fhwedos/whoisd/pkg/version"
 )
@@ -47,6 +48,29 @@ func main() {
 		fmt.Println(daemonName, version.RELEASE, buildTime.Format(time.RFC1123))
 		os.Exit(0)
 	}
+
+	if len(os.Args) > 1 {
+		command := os.Args[1]
+		switch command {
+		case "cacheFlush":
+			err := memcache.WriteCacheControl(daemon.Config, true, false)
+			if err != nil {
+				fmt.Println("ERROR: Flushing cache failed.", err)
+			} else {
+				fmt.Println("Cache will be flushed.")
+			}
+			os.Exit(0)
+		case "cacheStatus":
+			err := memcache.WriteCacheControl(daemon.Config, false, true)
+			if err != nil {
+				fmt.Println("ERROR: Failed to list cache items.")
+			} else {
+				fmt.Println("Cache items will be listed in file: ", daemon.Config.CacheListFile)
+			}
+			os.Exit(0)
+		}
+	}
+
 	status, err := daemon.Run()
 	if err != nil {
 		errlog.Printf("%s - %s", status, err)

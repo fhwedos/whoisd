@@ -3,6 +3,7 @@ package memcache
 import (
 	"bufio"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -101,6 +102,11 @@ func (memcache *Record) listCache() {
 		return
 	}
 
+	if err := listFile.Truncate(0); err != nil {
+		errlog.Println("Failed to truncate cache list file. Chache list file is invalid.", err)
+		return
+	}
+
 	for k := range items {
 		_, err := fmt.Fprintln(listFile, k)
 		if err != nil {
@@ -157,6 +163,12 @@ func loadCacheControlFile(conf *config.Record, control *CacheControl) error {
 
 // WriteCacheControl - writes cache control configuration
 func WriteCacheControl(conf *config.Record, flush bool, list bool) error {
+	conf.Load()
+
+	if conf.CacheEnabled != true {
+		return errors.New("ERROR: Cache is disabled")
+	}
+
 	control := &CacheControl{
 		FlushCache: flush,
 		ListCache:  list,

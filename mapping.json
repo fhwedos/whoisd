@@ -1,0 +1,288 @@
+[
+    {
+        "TLDs": ["com"],
+        "Fields" : {
+            "01": {
+                "key": "Domain Name: ",
+                "name": ["domain"],
+                "format": "{idn}",
+                "related": "domain"
+            },
+            "02": {
+                "key": "Registry Domain ID: ",
+                "name": ["data_roid"],
+                "related": "domain",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_history"
+            },
+            "03": {
+                "key": "Registrar WHOIS Server: ",
+                "value": ["whois.wedos.com"]
+            },
+            "04": {
+                "key": "Registrar URL: ",
+                "value": ["https://www.wedos.com"]
+            },
+            "05": {
+                "key": "Updated Date: ",
+                "name": ["data_update_date"],
+                "format": "{date}",
+                "related": "domain",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_history"
+            },
+            "06": {
+                "key": "Creation Date: ",
+                "name": ["data_setup_date"],
+                "format": "{date}",
+                "related": "domain",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_history"
+            },
+            "07": {
+                "key": "Registrar Registration Expiration Date: ",
+                "name": ["data_expiration"],
+                "format": "{date}",
+                "related": "domain",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_history"
+            },
+            "08": {
+                "key": "Registrar: ",
+                "value": ["WEDOS Internet, a.s."]
+            },
+            "09": {
+                "key": "Registrar IANA ID: ",
+                "value": ["3860"]
+            },
+            "10": {
+                "key": "Registrar Abuse Contact Email: ",
+                "value": ["abuse-domains@wedos.com"]
+            },
+            "11": {
+                "key": "Registrar Abuse Contact Phone: ",
+                "value": ["+420 123456789"]
+            },
+            "12": {
+                "key": "Reseller: ",
+                "value": [""],
+                "hide": true
+            },
+            "13": {
+                "key": "Domain Status: ",
+                "name": ["data_status"],
+                "multiple": true,
+                "related": "domain",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_history"
+            },
+            "14": {
+                "key": "",
+                "value": [""]
+            },
+            "15": {
+                "key": "Registry Registrant ID: ",
+                "value": ["Not Disclosed"]
+            },
+            "16": {
+                "key": "Registrant Name: ",
+                "value": ["Not Disclosed"]
+            },
+            "17": {
+                "key": "Registrant Organization: ",
+                "name": ["data_company"],
+                "related": "owner_c",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_contact_history"
+            },
+            "18": {
+                "key": "Registrant Street: ",
+                "value": ["Not Disclosed"]
+            },
+            "19": {
+                "key": "Registrant City: ",
+                "value": ["Not Disclosed"]
+            },
+            "20": {
+                "key": "Registrant State/Province: ",
+                "value": ["Not Disclosed"]
+            },
+            "21": {
+                "key": "Registrant Postal Code: ",
+                "value": ["Not Disclosed"]
+            },
+            "22": {
+                "key": "Registrant Country: ",
+                "value": ["Not Disclosed"]
+            },
+            "23": {
+                "key": "Registrant Phone: ",
+                "value": ["Not Disclosed"]
+            },
+            "24": {
+                "key": "Registrant Phone Ext: ",
+                "value": ["Not Disclosed"]
+            },
+            "25": {
+                "key": "Registrant Fax: ",
+                "value": ["Not Disclosed"]
+            },
+            "26": {
+                "key": "Registrant Fax Ext: ",
+                "value": ["Not Disclosed"]
+            },
+            "27": {
+                "key": "Registrant Email: ",
+                "value": ["https://whois-contact.wedos.com/?domain=&type=?"]
+            },
+            "28": {
+                "key": "",
+                "value": [""]
+            },
+            "29": {
+                "key": "Registry Admin ID: ",
+                "value": ["Not Disclosed"]
+            },
+            "30": {
+                "key": "Admin Name: ",
+                "value": ["Not Disclosed"]
+            },
+            "31": {
+                "key": "Admin Organization: ",
+                "name": ["data_company"],
+                "related": "admin_c",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_contact_history"
+            },
+            "32": {
+                "key": "Admin Street: ",
+                "value": ["Not Disclosed"]
+            },
+            "33": {
+                "key": "Admin City: ",
+                "value": ["Not Disclosed"]
+            },
+            "34": {
+                "key": "Admin State/Province: ",
+                "value": ["Not Disclosed"]
+            },
+            "35": {
+                "key": "Admin Postal Code: ",
+                "value": ["Not Disclosed"]
+            },
+            "36": {
+                "key": "Admin Country: ",
+                "value": ["Not Disclosed"]
+            },
+            "37": {
+                "key": "Admin Phone: ",
+                "value": ["Not Disclosed"]
+            },
+            "38": {
+                "key": "Admin Phone Ext: ",
+                "value": ["Not Disclosed"]
+            },
+            "39": {
+                "key": "Admin Fax: ",
+                "value": ["Not Disclosed"]
+            },
+            "40": {
+                "key": "Admin Fax Ext: ",
+                "value": ["Not Disclosed"]
+            },
+            "41": {
+                "key": "Admin Email: ",
+                "value": ["https://whois-contact.wedos.com/?domain=&type=?"]
+            },
+            "42": {
+                "key": "",
+                "value": [""]
+            },
+            "43": {
+                "key": "Registry Tech ID: ",
+                "value": ["Not Disclosed"]
+            },
+            "44": {
+                "key": "Tech Name: ",
+                "value": ["Not Disclosed"]
+            },
+            "45": {
+                "key": "Tech Organization: ",
+                "name": ["data_company"],
+                "related": "tech_c",
+                "relatedBy": "obj_name",
+                "relatedTo": "hosting_int.domains_contact_history"
+            },
+            "46": {
+                "key": "Tech Street: ",
+                "value": ["Not Disclosed"]
+            },
+            "47": {
+                "key": "Tech City: ",
+                "value": ["Not Disclosed"]
+            },
+            "48": {
+                "key": "Tech State/Province: ",
+                "value": ["Not Disclosed"]
+            },
+            "49": {
+                "key": "Tech Postal Code: ",
+                "value": ["Not Disclosed"]
+            },
+            "50": {
+                "key": "Tech Country: ",
+                "value": ["Not Disclosed"]
+            },
+            "51": {
+                "key": "Tech Phone: ",
+                "value": ["Not Disclosed"]
+            },
+            "52": {
+                "key": "Tech Phone Ext: ",
+                "value": ["Not Disclosed"]
+            },
+            "53": {
+                "key": "Tech Fax: ",
+                "value": ["Not Disclosed"]
+            },
+            "54": {
+                "key": "Tech Fax Ext: ",
+                "value": ["Not Disclosed"]
+            },
+            "55": {
+                "key": "Tech Email: ",
+                "value": ["https://whois-contact.wedos.com/?domain=&type=?"]
+            },
+            "56": {
+                "key": "",
+                "value": [""]
+            },
+            "57": {
+                "key": "Name Server: ",
+                "name": ["name"],
+                "multiple": true,
+                "related": "ID",
+                "relatedBy": "domain_id",
+                "relatedTo": "hosting_int.domains_dns"
+            },
+            "58": {
+                "key": "DNSSEC: ",
+                "value": ["unsigned"]
+            },
+            "59": {
+                "key": "",
+                "name": ["wdprs"],
+                "value": ["URL of the ICANN Whois Inaccuracy Complaint Form: https://www.icann.org/wicf/"]
+            },
+            "60": {
+                "key": "",
+                "format": ">>> Last update of WHOIS database: {date} <<<"
+            },
+            "70": {
+                "key": "",
+                "value": ["\nFor more information on Whois status codes, please visit https://www.icann.org/epp"]
+            }
+        }
+    }
+]
+  

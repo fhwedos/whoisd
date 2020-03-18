@@ -43,9 +43,6 @@ func New(name, description string) (*Record, error) {
 
 // Run or manage the service
 func (service *Record) Run() (string, error) {
-
-	usage := "Usage: ./whoisd install | remove | start | stop | status | cacheFlush | cacheStatus"
-
 	// if received any kind of command, do it
 	if len(os.Args) > 1 {
 		command := os.Args[1]
@@ -60,8 +57,6 @@ func (service *Record) Run() (string, error) {
 			return service.Stop()
 		case "status":
 			return service.Status()
-		default:
-			return usage, nil
 		}
 	}
 

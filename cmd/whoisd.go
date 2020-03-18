@@ -63,7 +63,7 @@ func main() {
 		case "cacheStatus":
 			err := memcache.WriteCacheControl(daemon.Config, false, true)
 			if err != nil {
-				fmt.Println("ERROR: Failed to list cache items.")
+				fmt.Println("ERROR: Failed to list cache items.", err)
 			} else {
 				fmt.Println("Cache items will be listed in file: ", daemon.Config.CacheListFile)
 			}

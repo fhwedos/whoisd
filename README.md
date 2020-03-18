@@ -1,4 +1,4 @@
-# Openprovider Whois Daemon
+# WEDOS Whois Daemon
 
 *A quick and easy way to setup your own WHOIS server with Elasticsearch/MySQL storage*
 
@@ -54,7 +54,7 @@ Examples of using Elasticsearch and MySQL backends in [examples/README.md](examp
 whoisd - Whois Daemon
 
 Usage:
-  whoisd install | remove | start | stop | status
+  whoisd install | remove | start | stop | status | cacheFlush | cacheStatus
   whoisd [ -t | --test ] [ -option | -option ... ]
   whoisd -h | --help
   whoisd -v | --version
@@ -65,25 +65,30 @@ Commands:
   start             Start service
   stop              Stop service
   status            Check service status
+  cacheFlush        Removes all items from memory cache
+  cacheStatus       List all items in memory cache in file
 
   -h --help         Show this screen
   -v --version      Show version
   -t --test         Test mode
 
 Options:
-  -config=<path>    Path to config file (used in /etc/whoisd/whoisd.conf)
-  -mapping=<path>   Path to mapping file (used in /etc/whoisd/conf.d/mapping.json)
-  -host=<host/IP>   Host name or IP address
-  -port=<port>      Port number
-  -work=<number>    Number of active workers (default 1000)
-  -conn=<number>    Number of active connections (default 1000)
-  -storage=<type>   Type of storage (Elasticsearch, Mysql or Dummy for testing)
-  -shost=<host/IP>  Storage host name or IP address
-  -sport=<port>     Storage port number
-  -suser=<name>     User name for storage login
-  -spassword=<***>  Password of storage user
-  -base=<name>      Storage index or database name
-  -table=<name>     Storage type or table name
+  -config=<path>        Path to config file (used in /etc/whoisd/whoisd.conf)
+  -mapping=<path>       Path to mapping file (used in /etc/whoisd/conf.d/mapping.json)
+  -host=<host/IP>       Host name or IP address
+  -port=<port>          Port number
+  -work=<number>        Number of active workers (default 1000)
+  -conn=<number>        Number of active connections (default 1000)
+  -storage=<type>       Type of storage (Elasticsearch, Mysql or Dummy for testing)
+  -shost=<host/IP>      Storage host name or IP address
+  -sport=<port>         Storage port number
+  -suser=<name>         User name for storage login
+  -spassword=<***>      Password of storage user
+  -base=<name>          Storage index or database name
+  -table=<name>         Storage type or table name
+  -cache=<bool>         Enable/disable memory cache
+  -cexpiration=<number> Set expiration of items in cache in minutes
+  -ccleanup=<number>    Sets interval for deletion of expired items from cache
 ```
 
 ## Config
@@ -96,6 +101,9 @@ The config file should be in /etc/whoisd/whoisd.conf. Of course possible to load
   "port": 43,
   "workers": 1000,
   "connections": 1000,
+  "cacheEnabled": true,       # default: false
+  "cacheExpiration:: 30,      # default: 60
+  "cacheCleanupInterval": 5,  # default: 10
   "storage": {
     "storageType": "Dummy",
     "host": "localhost",

@@ -7,25 +7,25 @@ import (
 func TestDummySearch(t *testing.T) {
 
 	type testData struct {
-		query    string
-		name     string
+		query    []string
+		name     []string
 		ask      string
 		expected []string
 	}
 
 	var tests = []testData{
-		{"google.com", "name", "ownerHandle", []string{"MMR-2383"}},
-		{"google.com", "name", "updatedDate", []string{"2014-05-19 04:00:17"}},
-		{"google.com", "name", "dnssec", []string{"unsigned"}},
-		{"example.tld", "name", "techHandle", []string{"5372811-ERL"}},
-		{"example.tld", "name", "domainStatus",
+		{[]string{"google.com"}, []string{"name"}, "ownerHandle", []string{"MMR-2383"}},
+		{[]string{"google.com"}, []string{"name"}, "updatedDate", []string{"2014-05-19 04:00:17"}},
+		{[]string{"google.com"}, []string{"name"}, "dnssec", []string{"unsigned"}},
+		{[]string{"example.tld"}, []string{"name"}, "techHandle", []string{"5372811-ERL"}},
+		{[]string{"example.tld"}, []string{"name"}, "domainStatus",
 			[]string{
 				"clientDeleteProhibited",
 				"clientRenewProhibited",
 				"clientTransferProhibited",
 			},
 		},
-		{"example.tld", "name", "dnssec", []string{"signedDelegation"}},
+		{[]string{"example.tld"}, []string{"name"}, "dnssec", []string{"signedDelegation"}},
 	}
 
 	dummy := DummyRecord{"domain"}
@@ -49,18 +49,18 @@ func TestDummySearch(t *testing.T) {
 func TestDummySearchRelated(t *testing.T) {
 
 	type testData struct {
-		query     string
-		name      string
+		query     []string
+		name      []string
 		relatedTo string
 		ask       string
 		expected  []string
 	}
 
 	var tests = []testData{
-		{"MMR-2383", "handle", "customer", "address.street", []string{"1600 Amphitheatre Parkway"}},
-		{"MMR-2383", "handle", "customer", "email", []string{"dns-admin@google.com"}},
-		{"MMR-2383", "handle", "customer", "name.lastName", []string{"Admin"}},
-		{"MMA-2211", "handle", "customer", "address.street", []string{"2400 E. Bayshore Pkwy"}},
+		{[]string{"MMR-2383"}, []string{"handle"}, "customer", "address.street", []string{"1600 Amphitheatre Parkway"}},
+		{[]string{"MMR-2383"}, []string{"handle"}, "customer", "email", []string{"dns-admin@google.com"}},
+		{[]string{"MMR-2383"}, []string{"handle"}, "customer", "name.lastName", []string{"Admin"}},
+		{[]string{"MMA-2211"}, []string{"handle"}, "customer", "address.street", []string{"2400 E. Bayshore Pkwy"}},
 	}
 
 	dummy := DummyRecord{"domain"}
@@ -84,21 +84,21 @@ func TestDummySearchRelated(t *testing.T) {
 func TestDummySearchMultiple(t *testing.T) {
 
 	type testData struct {
-		query     string
-		name      string
+		query     []string
+		name      []string
 		relatedTo string
 		ask       string
 		expected  []string
 	}
 
 	var tests = []testData{
-		{"1", "nsgroupId", "nameserver", "name",
+		{[]string{"1"}, []string{"nsgroupId"}, "nameserver", "name",
 			[]string{
 				"NS01.EXAMPLE-REGISTRAR.TLD",
 				"NS02.EXAMPLE-REGISTRAR.TLD",
 			},
 		},
-		{"2", "nsgroupId", "nameserver", "name",
+		{[]string{"2"}, []string{"nsgroupId"}, "nameserver", "name",
 			[]string{
 				"ns1.google.com",
 				"ns2.google.com",
@@ -133,27 +133,27 @@ func TestDummySearchEmpty(t *testing.T) {
 	dummy := DummyRecord{"domain"}
 	var emptyResult map[string][]string
 	var err error
-	emptyResult, err = dummy.Search("name", "")
+	emptyResult, err = dummy.Search([]string{"name"}, []string{""})
 	if err == nil {
 		t.Error("Expected error for empty query, got", err)
 	}
-	emptyResult, err = dummy.Search("name", "aaa")
+	emptyResult, err = dummy.Search([]string{"name"}, []string{"aaa"})
 	if len(emptyResult) != 0 {
 		t.Error("Expected len of empty query", 0, ", got", len(emptyResult))
 	}
-	emptyResult, err = dummy.SearchRelated("customer", "", "")
+	emptyResult, err = dummy.SearchRelated("customer", []string{""}, []string{""})
 	if err == nil {
 		t.Error("Expected error for empty query, got", err)
 	}
-	emptyResult, err = dummy.SearchRelated("customer", "handle", "AA-BB")
+	emptyResult, err = dummy.SearchRelated("customer", []string{"handle"}, []string{"AA-BB"})
 	if len(emptyResult) != 0 {
 		t.Error("Expected len of empty query", 0, ", got", len(emptyResult))
 	}
-	emptyResult, err = dummy.SearchMultiple("nameserver", "", "")
+	emptyResult, err = dummy.SearchMultiple("nameserver", []string{""}, []string{""})
 	if err == nil {
 		t.Error("Expected error for empty query, got", err)
 	}
-	emptyResult, err = dummy.SearchMultiple("nameserver", "nsgroupId", "7")
+	emptyResult, err = dummy.SearchMultiple("nameserver", []string{"nsgroupId"}, []string{"7"})
 	if len(emptyResult) != 0 {
 		t.Error("Expected len of empty query", 0, ", got", len(emptyResult))
 	}

@@ -40,13 +40,13 @@ func TestStorage(t *testing.T) {
 		Key:     "Domain Name: ",
 		Name:    []string{"name"},
 		Format:  "{idn}",
-		Related: "name",
+		Related: []string{"name"},
 	}
 	entry.Fields["02"] = mapper.Field{
 		Key:     "Registry Domain ID: ",
 		Name:    []string{"domainId"},
 		Hide:    true,
-		Related: "name",
+		Related: []string{"name"},
 	}
 	entry.Fields["03"] = mapper.Field{
 		Key:   "Registrar WHOIS Server: ",
@@ -56,20 +56,20 @@ func TestStorage(t *testing.T) {
 		Key:     "Updated Date: ",
 		Name:    []string{"updatedDate"},
 		Format:  "{date}",
-		Related: "name",
+		Related: []string{"name"},
 	}
 	entry.Fields["12"] = mapper.Field{
 		Key:      "Domain Status: ",
 		Name:     []string{"domainStatus"},
 		Multiple: true,
-		Related:  "name",
+		Related:  []string{"name"},
 	}
 	entry.Fields["13"] = mapper.Field{
 		Key:       "Registry Registrant ID: ",
 		Name:      []string{"handle"},
 		Hide:      true,
-		Related:   "ownerHandle",
-		RelatedBy: "handle",
+		Related:   []string{"ownerHandle"},
+		RelatedBy: []string{"handle"},
 		RelatedTo: "customer",
 	}
 	entry.Fields["21"] = mapper.Field{
@@ -80,16 +80,16 @@ func TestStorage(t *testing.T) {
 			"phone.subscriberNumber",
 		},
 		Format:    "{string}.{string}{string}",
-		Related:   "ownerHandle",
-		RelatedBy: "handle",
+		Related:   []string{"ownerHandle"},
+		RelatedBy: []string{"handle"},
 		RelatedTo: "customer",
 	}
 	entry.Fields["52"] = mapper.Field{
 		Key:       "Name Server: ",
 		Name:      []string{"name"},
 		Multiple:  true,
-		Related:   "nsgroupId",
-		RelatedBy: "nsgroupId",
+		Related:   []string{"nsgroupId"},
+		RelatedBy: []string{"nsgroupId"},
 		RelatedTo: "nameserver",
 	}
 	entry.Fields["55"] = mapper.Field{
@@ -97,8 +97,8 @@ func TestStorage(t *testing.T) {
 		Value:     []string{"1"},
 		Name:      []string{"updatedDate"},
 		Format:    ">>> Last update of WHOIS database: {date} <<<",
-		Related:   "whois",
-		RelatedBy: "id",
+		Related:   []string{"whois"},
+		RelatedBy: []string{"id"},
 		RelatedTo: "whois",
 	}
 	bundle = append(bundle, *entry)

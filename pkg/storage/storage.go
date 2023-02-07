@@ -20,9 +20,9 @@ import (
 
 // Storage - the interface for every implementation of storage
 type Storage interface {
-	Search(name string, query string) (map[string][]string, error)
-	SearchRelated(typeTable string, name string, query string) (map[string][]string, error)
-	SearchMultiple(typeTable string, name string, query string) (map[string][]string, error)
+	Search(name []string, query []string) (map[string][]string, error)
+	SearchRelated(typeTable string, name []string, query []string) (map[string][]string, error)
+	SearchMultiple(typeTable string, name []string, query []string) (map[string][]string, error)
 }
 
 // Record - standard record (struct) for storage package
@@ -177,7 +177,7 @@ func (storage *Record) request(query string) (*mapper.Entry, error) {
 			(len(field.RelatedBy) == 0 || len(field.RelatedTo) == 0) {
 			// if baseField not loaded, do it
 			if len(baseField) == 0 {
-				baseField, err = storage.dataStore.Search(field.Related, query)
+				baseField, err = storage.dataStore.Search(field.Related, []string{query})
 				if err != nil {
 					return nil, err
 				}
@@ -210,17 +210,23 @@ func (storage *Record) request(query string) (*mapper.Entry, error) {
 		// Detect related fields
 		if len(field.RelatedBy) != 0 && len(field.RelatedTo) != 0 && len(field.Related) != 0 {
 			value := []string{}
-			queryRelated := strings.Join(baseField[field.Related], "")
+			queryRelated := []string{}
+
+			for i := 0; i < len(field.Related); i++ {
+				queryRelated = append(queryRelated, baseField[field.Related[i]]...)
+			}
 
 			// if non-related field from specified type/table
 			if len(field.Value) != 0 {
-				queryRelated = field.Value[0]
+				queryRelated = []string{field.Value[0]}
 			}
 
+			fieldRelatedKey := strings.Join(field.Related, "")
+
 			// if field not cached, do it
-			if _, ok := relatedField[field.Related]; ok == false {
+			if _, ok := relatedField[fieldRelatedKey]; ok == false {
 				if field.Multiple {
-					relatedField[field.Related], err = storage.dataStore.SearchMultiple(
+					relatedField[fieldRelatedKey], err = storage.dataStore.SearchMultiple(
 						field.RelatedTo,
 						field.RelatedBy,
 						queryRelated,
@@ -229,7 +235,7 @@ func (storage *Record) request(query string) (*mapper.Entry, error) {
 						return nil, err
 					}
 				} else {
-					relatedField[field.Related], err = storage.dataStore.SearchRelated(
+					relatedField[fieldRelatedKey], err = storage.dataStore.SearchRelated(
 						field.RelatedTo,
 						field.RelatedBy,
 						queryRelated,
@@ -241,7 +247,7 @@ func (storage *Record) request(query string) (*mapper.Entry, error) {
 			}
 			// collects all values into value
 			for _, item := range field.Name {
-				if result, ok := relatedField[field.Related][item]; ok {
+				if result, ok := relatedField[fieldRelatedKey][item]; ok {
 					value = append(value, result...)
 				}
 			}

@@ -7,11 +7,18 @@ package storage
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
 	"strconv"
 	"strings"
 
 	// MySQL driver
 	_ "github.com/go-sql-driver/mysql"
+)
+
+// simplest logger, which initialized during starts of the application
+var (
+	mylog = log.New(os.Stdout, "[MYSQL]: ", log.Ldate|log.Ltime)
 )
 
 // MysqlRecord - standard record (struct) for mysql storage package
@@ -25,7 +32,7 @@ type MysqlRecord struct {
 }
 
 // Search data in the storage
-func (mysql *MysqlRecord) Search(name string, query string) (map[string][]string, error) {
+func (mysql *MysqlRecord) Search(name []string, query []string) (map[string][]string, error) {
 	result, err := mysql.searchRaw(mysql.Table, name, query)
 	if err != nil {
 		return nil, err
@@ -40,7 +47,7 @@ func (mysql *MysqlRecord) Search(name string, query string) (map[string][]string
 
 // SearchRelated - search data in the storage from related type or table
 func (mysql *MysqlRecord) SearchRelated(
-	typeTable string, name string, query string) (map[string][]string, error) {
+	typeTable string, name []string, query []string) (map[string][]string, error) {
 
 	result, err := mysql.searchRaw(typeTable, name, query)
 	if err != nil {
@@ -56,7 +63,7 @@ func (mysql *MysqlRecord) SearchRelated(
 
 // SearchMultiple - search multiple records of data in the storage
 func (mysql *MysqlRecord) SearchMultiple(
-	typeTable string, name string, query string) (map[string][]string, error) {
+	typeTable string, name []string, query []string) (map[string][]string, error) {
 
 	result, err := mysql.searchRaw(typeTable, name, query)
 	if err != nil {
@@ -77,7 +84,7 @@ func (mysql *MysqlRecord) SearchMultiple(
 	return data, nil
 }
 
-func (mysql *MysqlRecord) searchRaw(typeTable string, name string, query string) ([]map[string][]string, error) {
+func (mysql *MysqlRecord) searchRaw(typeTable string, name []string, query []string) ([]map[string][]string, error) {
 	// Thanks to https://github.com/go-sql-driver/mysql/wiki/Examples#rawbytes
 	db, err := sql.Open("mysql", mysql.User+":"+mysql.Password+
 		"@tcp("+mysql.Host+":"+strconv.Itoa(mysql.Port)+")/"+
@@ -89,11 +96,30 @@ func (mysql *MysqlRecord) searchRaw(typeTable string, name string, query string)
 
 	defer db.Close()
 
-	// Filter input
-	name = filterString(name, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
-	query = filterString(query, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-")
+	where := []string{}
+
+	for i := 0; i < len(name); i++ {
+		// Filter input
+		name[i] = filterString(name[i], "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")
+		query[i] = filterString(query[i], "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-")
+
+		where = append(where, name[i]+"=\""+query[i]+"\"")
+	}
+
+	dbQuery := fmt.Sprintf("SELECT * FROM %s WHERE %s", typeTable, strings.Join(where, " AND "))
+
+	mylog.Println("QUERY:", dbQuery)
+
+	f, err := os.OpenFile("mysql_log_file", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+	log.SetOutput(f)
+	log.Println(dbQuery)
+
 	// Execute the query
-	rows, err := db.Query("SELECT * FROM "+typeTable+" where "+name+"=?", query)
+	rows, err := db.Query(dbQuery)
 	if err != nil {
 		return nil, fmt.Errorf("Mysql query error: %v", err)
 	}

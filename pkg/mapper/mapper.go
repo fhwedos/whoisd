@@ -40,10 +40,10 @@ type Field struct {
 	Hide bool
 
 	// a name of the field in a database through which a request for
-	Related string
+	Related []string
 
 	// a name of the field in a database through which related a request for
-	RelatedBy string
+	RelatedBy []string
 
 	// a name of the table/type in a database through which made a relation
 	RelatedTo string

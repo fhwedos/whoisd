@@ -21,7 +21,7 @@ type ElasticsearchRecord struct {
 }
 
 // Search data in the storage
-func (elastic *ElasticsearchRecord) Search(name string, query string) (map[string][]string, error) {
+func (elastic *ElasticsearchRecord) Search(name []string, query []string) (map[string][]string, error) {
 
 	result, err := elastic.searchRaw(elastic.Type, name, query)
 	if err != nil {
@@ -37,7 +37,7 @@ func (elastic *ElasticsearchRecord) Search(name string, query string) (map[strin
 
 // SearchRelated - search data in the storage from related type or table
 func (elastic *ElasticsearchRecord) SearchRelated(
-	typeTable string, name string, query string) (map[string][]string, error) {
+	typeTable string, name []string, query []string) (map[string][]string, error) {
 
 	result, err := elastic.searchRaw(typeTable, name, query)
 	if err != nil {
@@ -53,7 +53,7 @@ func (elastic *ElasticsearchRecord) SearchRelated(
 
 // SearchMultiple - search multiple records of data in the storage
 func (elastic *ElasticsearchRecord) SearchMultiple(
-	typeTable string, name string, query string) (map[string][]string, error) {
+	typeTable string, name []string, query []string) (map[string][]string, error) {
 
 	result, err := elastic.searchRaw(typeTable, name, query)
 	if err != nil {
@@ -76,7 +76,7 @@ func (elastic *ElasticsearchRecord) SearchMultiple(
 
 // search raw data in the storage
 func (elastic *ElasticsearchRecord) searchRaw(
-	typeTable string, name string, query string) ([]map[string][]string, error) {
+	typeTable string, name []string, query []string) ([]map[string][]string, error) {
 
 	if len(typeTable) == 0 || len(name) == 0 || len(query) == 0 {
 		return nil, errors.New("Incomplete request, request parameters could not be empty")
@@ -86,7 +86,7 @@ func (elastic *ElasticsearchRecord) searchRaw(
 
 	url := "http://" + elastic.Host + ":" + strconv.Itoa(elastic.Port) +
 		"/" + elastic.Index + "/" + typeTable
-	request := url + "/_search?q=" + name + ":" + query + ""
+	request := url + "/_search?q=" + name[0] + ":" + query[0] + ""
 	response, err := http.Get(request)
 	if err != nil {
 		return items, err

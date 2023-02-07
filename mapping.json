@@ -6,13 +6,13 @@
                 "key": "Domain Name: ",
                 "name": ["domain"],
                 "format": "{idn}",
-                "related": "domain"
+                "related": ["domain"]
             },
             "02": {
                 "key": "Registry Domain ID: ",
                 "name": ["data_roid"],
-                "related": "domain",
-                "relatedBy": "obj_name",
+                "related": ["domain"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_history"
             },
             "03": {
@@ -27,24 +27,24 @@
                 "key": "Updated Date: ",
                 "name": ["data_update_date"],
                 "format": "{date}",
-                "related": "domain",
-                "relatedBy": "obj_name",
+                "related": ["domain"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_history"
             },
             "06": {
                 "key": "Creation Date: ",
                 "name": ["data_setup_date"],
                 "format": "{date}",
-                "related": "domain",
-                "relatedBy": "obj_name",
+                "related": ["domain"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_history"
             },
             "07": {
                 "key": "Registrar Registration Expiration Date: ",
                 "name": ["data_expiration"],
                 "format": "{date}",
-                "related": "domain",
-                "relatedBy": "obj_name",
+                "related": ["domain"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_history"
             },
             "08": {
@@ -72,8 +72,8 @@
                 "key": "Domain Status: ",
                 "name": ["data_status"],
                 "multiple": true,
-                "related": "domain",
-                "relatedBy": "obj_name",
+                "related": ["domain"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_history"
             },
             "14": {
@@ -91,8 +91,8 @@
             "17": {
                 "key": "Registrant Organization: ",
                 "name": ["data_company"],
-                "related": "owner_c",
-                "relatedBy": "obj_name",
+                "related": ["owner_c"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_contact_history"
             },
             "18": {
@@ -150,8 +150,8 @@
             "31": {
                 "key": "Admin Organization: ",
                 "name": ["data_company"],
-                "related": "admin_c",
-                "relatedBy": "obj_name",
+                "related": ["admin_c"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_contact_history"
             },
             "32": {
@@ -209,8 +209,8 @@
             "45": {
                 "key": "Tech Organization: ",
                 "name": ["data_company"],
-                "related": "tech_c",
-                "relatedBy": "obj_name",
+                "related": ["tech_c"],
+                "relatedBy": ["obj_name"],
                 "relatedTo": "hosting_int.domains_contact_history"
             },
             "46": {
@@ -261,8 +261,8 @@
                 "key": "Name Server: ",
                 "name": ["name"],
                 "multiple": true,
-                "related": "ID",
-                "relatedBy": "domain_id",
+                "related": ["ID"],
+                "relatedBy": ["domain_id"],
                 "relatedTo": "hosting_int.domains_dns"
             },
             "58": {

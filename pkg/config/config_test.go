@@ -45,8 +45,8 @@ func TestConfig(t *testing.T) {
 	}
 	key = "02"
 	expected = "name"
-	if entry.Fields[key].Related != expected {
-		t.Error("Expected", expected, ", got", entry.Fields[key].Related)
+	if entry.Fields[key].Related[0] != expected {
+		t.Error("Expected", expected, ", got", entry.Fields[key].Related[0])
 	}
 	key = "05"
 	expected = "{date}"

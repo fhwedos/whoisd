@@ -6,148 +6,148 @@
         "key": "Domain Name: ",
         "name": ["name"],
 	"format": "{idn}",
-        "related": "name"
+        "related": ["name"]
       },
       "02": {
         "key": "Registry Domain ID: ",
         "name": ["domainId"],
-        "related": "name"
+        "related": ["name"]
       },
       "03": {
         "key": "Registrar WHOIS Server: ",
         "name": ["whoisServer"],
-        "related": "staticInfoId",
-        "relatedBy": "id",
+        "related": ["staticInfoId"],
+        "relatedBy": ["id"],
         "relatedTo": "staticInfo"
       },
       "04": {
         "key": "Registrar URL: ",
         "name": ["registrarUrl"],
-        "related": "staticInfoId",
-        "relatedBy": "id",
+        "related": ["staticInfoId"],
+        "relatedBy": ["id"],
         "relatedTo": "staticInfo"
       },
       "05": {
         "key": "Updated Date: ",
         "name": ["updatedDate"],
         "format": "{date}",
-        "related": "name"
+        "related": ["name"]
       },
       "06": {
         "key": "Creation Date: ",
         "name": ["creationDate"],
         "format": "{date}",
-        "related": "name"
+        "related": ["name"]
       },
       "07": {
         "key": "Registrar Registration Expiration Date: ",
         "name": ["expirationDate"],
         "format": "{date}",
-        "related": "name"
+        "related": ["name"]
       },
       "08": {
         "key": "Registrar: ",
         "name": ["companyName"],
-        "related": "staticInfoId",
-        "relatedBy": "id",
+        "related": ["staticInfoId"],
+        "relatedBy": ["id"],
         "relatedTo": "staticInfo"
       },
       "09": {
         "key": "Registrar IANA ID: ",
         "name": ["ianaId"],
-        "related": "staticInfoId",
-        "relatedBy": "id",
+        "related": ["staticInfoId"],
+        "relatedBy": ["id"],
         "relatedTo": "staticInfo"
       },
       "10": {
         "key": "Registrar Abuse Contact Email: ",
         "name": ["abuseEmail"],
-        "related": "staticInfoId",
-        "relatedBy": "id",
+        "related": ["staticInfoId"],
+        "relatedBy": ["id"],
         "relatedTo": "staticInfo"
       },
       "11": {
         "key": "Registrar Abuse Contact Phone: ",
         "name": ["abusePhone"],
-        "related": "staticInfoId",
-        "relatedBy": "id",
+        "related": ["staticInfoId"],
+        "relatedBy": ["id"],
         "relatedTo": "staticInfo"
       },
       "12": {
         "key": "Reseller: ",
         "name": ["name"],
         "hide": true,
-        "related": "resellerId",
-        "relatedBy": "resellerId",
+        "related": ["resellerId"],
+        "relatedBy": ["resellerId"],
         "relatedTo": "reseller"
       },
       "13": {
         "key": "Domain Status: ",
         "name": ["status"],
         "multiple": true,
-        "related": "name",
-        "relatedBy": "name",
+        "related": ["name"],
+        "relatedBy": ["name"],
         "relatedTo": "domainStatus"
       },
       "14": {
         "key": "Registry Registrant ID: ",
         "name": ["ownerHandle"],
-        "related": "name"
+        "related": ["name"]
       },
       "15": {
         "key": "Registrant Name: ",
         "name": ["firstName", "lastName"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "16": {
         "key": "Registrant Organization: ",
         "name": ["companyName"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "17": {
         "key": "Registrant Street: ",
         "name": ["addressStreet"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "18": {
         "key": "Registrant City: ",
         "name": ["addressCity"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "19": {
         "key": "Registrant State/Province: ",
         "name": ["addressState"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "20": {
         "key": "Registrant Postal Code: ",
         "name": ["addressZipCode"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "21": {
         "key": "Registrant Country: ",
         "name": ["addressCountry"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "22": {
         "key": "Registrant Phone: ",
         "name": ["phoneNumber"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "23": {
@@ -157,8 +157,8 @@
       "24": {
         "key": "Registrant Fax: ",
         "name": ["faxNumber"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "25": {
@@ -168,69 +168,69 @@
       "26": {
         "key": "Registrant Email: ",
         "name": ["email"],
-        "related": "ownerHandle",
-        "relatedBy": "handle",
+        "related": ["ownerHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "27": {
         "key": "Registry Admin ID: ",
         "name": ["adminHandle"],
-        "related": "name"
+        "related": ["name"]
       },
       "28": {
         "key": "Admin Name: ",
         "name": ["firstName", "lastName"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "29": {
         "key": "Admin Organization: ",
         "name": ["companyName"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "30": {
         "key": "Admin Street: ",
         "name": ["addressStreet"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "31": {
         "key": "Admin City: ",
         "name": ["addressCity"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "32": {
         "key": "Admin State/Province: ",
         "name": ["addressState"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "33": {
         "key": "Admin Postal Code: ",
         "name": ["addressZipCode"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "34": {
         "key": "Admin Country: ",
         "name": ["addressCountry"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "35": {
         "key": "Admin Phone: ",
         "name": ["phoneNumber"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "36": {
@@ -240,8 +240,8 @@
       "37": {
         "key": "Admin Fax: ",
         "name": ["faxNumber"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "38": {
@@ -251,69 +251,69 @@
       "39": {
         "key": "Admin Email: ",
         "name": ["email"],
-        "related": "adminHandle",
-        "relatedBy": "handle",
+        "related": ["adminHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "40": {
         "key": "Registry Tech ID: ",
         "name": ["techHandle"],
-        "related": "name"
+        "related": ["name"]
       },
       "41": {
         "key": "Tech Name: ",
         "name": ["firstName", "lastName"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "42": {
         "key": "Tech Organization: ",
         "name": ["companyName"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "43": {
         "key": "Tech Street: ",
         "name": ["addressStreet"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "44": {
         "key": "Tech City: ",
         "name": ["addressCity"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "45": {
         "key": "Tech State/Province: ",
         "name": ["addressState"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "46": {
         "key": "Tech Postal Code: ",
         "name": ["addressZipCode"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "47": {
         "key": "Tech Country: ",
         "name": ["addressCountry"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "48": {
         "key": "Tech Phone: ",
         "name": ["phoneNumber"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "49": {
@@ -323,8 +323,8 @@
       "50": {
         "key": "Tech Fax: ",
         "name": ["faxNumber"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "51": {
@@ -334,69 +334,69 @@
       "52": {
         "key": "Tech Email: ",
         "name": ["email"],
-        "related": "techHandle",
-        "relatedBy": "handle",
+        "related": ["techHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "53": {
         "key": "Registry Billing ID: ",
         "name": ["billingHandle"],
-        "related": "name"
+        "related": ["name"]
       },
       "54": {
         "key": "Billing Name: ",
         "name": ["firstName", "lastName"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "55": {
         "key": "Billing Organization: ",
         "name": ["companyName"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "56": {
         "key": "Billing Street: ",
         "name": ["addressStreet"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "57": {
         "key": "Billing City: ",
         "name": ["addressCity"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "58": {
         "key": "Billing State/Province: ",
         "name": ["addressState"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "59": {
         "key": "Billing Postal Code: ",
         "name": ["addressZipCode"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "60": {
         "key": "Billing Country: ",
         "name": ["addressCountry"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "61": {
         "key": "Billing Phone: ",
         "name": ["phoneNumber"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "62": {
@@ -406,8 +406,8 @@
       "63": {
         "key": "Billing Fax: ",
         "name": ["faxNumber"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "64": {
@@ -417,22 +417,22 @@
       "65": {
         "key": "Billing Email: ",
         "name": ["email"],
-        "related": "billingHandle",
-        "relatedBy": "handle",
+        "related": ["billingHandle"],
+        "relatedBy": ["handle"],
         "relatedTo": "customer"
       },
       "66": {
         "key": "Name Server: ",
         "name": ["name"],
         "multiple": true,
-        "related": "nsgroupId",
-        "relatedBy": "nsgroupId",
+        "related": ["nsgroupId"],
+        "relatedBy": ["nsgroupId"],
         "relatedTo": "nameserver"
       },
       "67": {
         "key": "DNSSEC: ",
         "name": ["dnssec"],
-        "related": "name"
+        "related": ["name"]
       },
       "68": {
         "key": "",
@@ -444,8 +444,8 @@
         "value": ["1"],
         "name": ["updatedDate"],
         "format": ">>> Last update of WHOIS database: {date} <<<",
-        "related": "whois",
-        "relatedBy": "id",
+        "related": ["whois"],
+        "relatedBy": ["id"],
         "relatedTo": "whois"
       },
       "70": {

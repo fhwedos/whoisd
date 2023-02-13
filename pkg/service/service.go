@@ -85,9 +85,15 @@ func (service *Record) Run() (string, error) {
 	}
 
 	// Set up listener for defined host and port
-	listener, err := net.Listen("tcp", serviceHostPort)
+	listener, err := net.Listen("tcp4", serviceHostPort)
 	if err != nil {
-		return "Possibly was a problem with the port binding", err
+		return "Possibly was a problem with the port binding for IPv4", err
+	}
+
+	// Set up listener for defined host and port
+	listener6, err := net.Listen("tcp6", serviceHostPort)
+	if err != nil {
+		return "Possibly was a problem with the port binding for IPv6", err
 	}
 
 	// set up channel to collect client queries
@@ -134,6 +140,10 @@ func (service *Record) Run() (string, error) {
 	// set up channel on which to send accepted connections
 	listen := make(chan net.Conn, service.Config.Connections)
 	go acceptConnection(listener, listen)
+
+	// set up channel on which to send accepted connections
+	listen6 := make(chan net.Conn, service.Config.Connections)
+	go acceptConnection(listener6, listen6)
 
 	// loop work cycle with accept connections or interrupt
 	// by system signal

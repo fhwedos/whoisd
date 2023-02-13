@@ -149,6 +149,9 @@ func (service *Record) Run() (string, error) {
 	// by system signal
 	for {
 		select {
+		case conn := <-listen6:
+			newClient := client.Record{Conn: conn}
+			go newClient.HandleClient(channel)
 		case conn := <-listen:
 			newClient := client.Record{Conn: conn}
 			go newClient.HandleClient(channel)
